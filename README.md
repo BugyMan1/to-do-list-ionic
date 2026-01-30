@@ -181,15 +181,15 @@ Si deseas probar la aplicación con Firebase Remote Config:
    - Reemplaza el objeto `firebase` con tus credenciales:
 ```typescript
    export const environment = {
-     production: false,
-     firebase: {
-       apiKey: "TU_API_KEY_AQUI",
-       authDomain: "tu-proyecto.firebaseapp.com",
-       projectId: "tu-proyecto",
-       storageBucket: "tu-proyecto.appspot.com",
-       messagingSenderId: "123456789",
-       appId: "1:123456789:web:abc123"
-     }
+      production: false,
+      firebase: {
+         apiKey: "TU_API_KEY",
+         authDomain: "TU_PROJECT_ID.firebaseapp.com",
+         projectId: "TU_PROJECT_ID",
+         storageBucket: "TU_PROJECT_ID.appspot.com",
+         messagingSenderId: "TU_MESSAGING_SENDER_ID",
+         appId: "TU_APP_ID",
+      }
    };
 ```
    
