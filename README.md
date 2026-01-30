@@ -290,7 +290,7 @@ src/
 
 - Se crea la app sin categoría
 
-![alt text](src/assets/screenshots/image-1.png)
+![alt text](src/assets/screenshots/image-2.png)
 
 - Vamos a crear una categoría (titulo y elegimos color)
 
