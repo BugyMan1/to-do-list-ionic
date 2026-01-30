@@ -335,7 +335,6 @@ src/
 
 - **Virtual Scrolling**: Para renderizar solo elementos visibles en listas largas
 - **ChangeDetection OnPush**: Reduce verificaciones innecesarias
-- **IndexedDB**: Más rápido que localStorage para datos complejos
 - **Lazy Loading**: Carga módulos bajo demanda
 - **Debounce**: En búsquedas para reducir operaciones
 - **TrackBy**: Optimiza renderizado de listas
