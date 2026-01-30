@@ -1,0 +1,133 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Mis Tareas</ion-title>
+    <ion-buttons slot="end">
+      @if (categoriesEnabled) {
+        <ion-button (click)="presentCategoryModal()" (keydown.enter)="presentCategoryModal()">
+          <ion-icon name="folder-outline"></ion-icon>
+        </ion-button>
+      }
+      <ion-button (click)="refreshConfig()" (keydown.enter)="refreshConfig()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Search bar and filters -->
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searchText" (ionInput)="onSearchChange()" placeholder="Buscar tareas..." debounce="300">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <!-- Category filters (only if enabled) -->
+   @if (categoriesEnabled && categories.length > 1) {
+     <ion-toolbar>
+       <ion-segment [(ngModel)]="selectedCategoryId" (ionChange)="onCategoryFilterChange()">
+         <ion-segment-button value="all">
+           <ion-label>Todas</ion-label>
+         </ion-segment-button>
+         
+         @for (category of categories; track $index) {
+           <ion-segment-button [value]="category.id">
+             <ion-label>
+               <ion-icon name="ellipse" [style.color]="category.color"></ion-icon>
+               {{ category.name }}
+             </ion-label>
+           </ion-segment-button>
+         }
+       </ion-segment>
+     </ion-toolbar>
+   }
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Statistics -->
+  <ion-card>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="4" class="stat-col">
+            <div class="stat-number">{{ taskStats.total }}</div>
+            <div class="stat-label">Total</div>
+          </ion-col>
+          <ion-col size="4" class="stat-col">
+            <div class="stat-number text-success">{{ taskStats.completed }}</div>
+            <div class="stat-label">Completadas</div>
+          </ion-col>
+          <ion-col size="4" class="stat-col">
+            <div class="stat-number text-warning">{{ taskStats.pending }}</div>
+            <div class="stat-label">Pendientes</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Filter options -->
+  <ion-item lines="none">
+    <ion-checkbox slot="start" [(ngModel)]="showCompleted" (ionChange)="onShowCompletedChange()"></ion-checkbox>
+    <ion-label>Mostrar completadas</ion-label>
+
+    @if (taskStats.completed > 0) {
+      <ion-button slot="end" fill="clear" color="danger" (click)="clearCompletedTasks()" (keydown.enter)="clearCompletedTasks()">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Limpiar completadas
+      </ion-button>
+    }
+  </ion-item>
+
+  <!-- Optimized task list -->
+  @if (filteredTasks$ | async; as tasks) {
+    <div>
+      @if (tasks.length === 0) {
+        <div class="empty-state">
+          <ion-icon name="checkbox-outline" color="medium"></ion-icon>
+          <h2>No hay tareas</h2>
+          <p>{{ searchText ? 'No se encontraron tareas con ese criterio' : 'Agrega tu primera tarea presionando el botón +'
+            }}</p>
+        </div>
+      }
+  
+      <!-- Optimized list with trackBy for any number of tasks -->
+      @if (tasks.length > 0) {
+        <ion-list>
+          @for (task of tasks; track trackByTaskId(task)) {
+            <ion-item-sliding>
+              <ion-item [class.task-completed]="task.completed" button (click)="editTask(task)"
+                (keydown.enter)="editTask(task)">
+                <ion-checkbox slot="start" [checked]="task.completed" (ionChange)="toggleTaskCompleted(task)">
+                </ion-checkbox>
+    
+                <ion-label>
+                  <h2 [class.completed-text]="task.completed">{{ task.title }}</h2>
+                  <p [class.completed-text]="task.completed">{{ task.description }}</p>
+                  <p class="task-meta">
+                    <ion-icon name="ellipse" [style.color]="getCategoryColor(task.categoryId)"></ion-icon>
+                    {{ getCategoryName(task.categoryId) }}
+                    <span class="task-date">{{ task.createdAt | date:'short' }}</span>
+                  </p>
+                </ion-label>
+              </ion-item>
+    
+              <ion-item-options side="end">
+                <ion-item-option color="primary" (click)="editTask(task)" (keydown.enter)="editTask(task)">
+                  <ion-icon name="create-outline"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger" (click)="deleteTask(task)" (keydown.enter)="deleteTask(task)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          }
+        </ion-list>
+      }
+    </div>
+  }
+
+  <!-- Floating button to add task -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addTask()" (keydown.enter)="addTask()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal()" (keydown.enter)="closeModal()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Gestión de Categorías</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="addCategory()" (keydown.enter)="addCategory()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Information -->
+  <ion-card>
+    <ion-card-content>
+      <p class="info-text">
+        <ion-icon name="information-circle" color="primary"></ion-icon>
+        Las categorías te ayudan a organizar tus tareas. Puedes crear, editar y eliminar categorías según tus necesidades.
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Statistics -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Estadísticas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <div class="stat-item">
+              <div class="stat-number">{{ totalCategories }}</div>
+              <div class="stat-label">Categorías</div>
+            </div>
+          </ion-col>
+          <ion-col size="6">
+            <div class="stat-item">
+              <div class="stat-number">{{ totalTasks }}</div>
+              <div class="stat-label">Tareas totales</div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Categories list -->
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Mis Categorías</ion-label>
+    </ion-list-header>
+
+    @for (category of categories; track trackByCategory(category)) {
+      <ion-item [class.default-category]="category.id === 'uncategorized'">
+        <ion-icon 
+          name="ellipse" 
+          slot="start" 
+          [style.color]="category.color">
+        </ion-icon>
+        
+        <ion-label>
+          <h2>{{ category.name }}</h2>
+          <p>{{ getTaskCount(category.id) }} tarea(s)</p>
+        </ion-label>
+  
+        @if (category.id !== 'uncategorized') {
+          <ion-buttons slot="end">
+            <ion-button (click)="editCategory(category)" color="primary" (keydown.enter)="editCategory(category)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button (click)="deleteCategory(category)" color="danger" (keydown.enter)="deleteCategory(category)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        }
+        
+        @if (category.id === 'uncategorized') {
+          <ion-note slot="end">
+            Por defecto
+          </ion-note>
+        }
+      </ion-item>
+    }
+
+    <!-- Message if no categories -->
+    @if (categories.length === 1) {
+      <div class="empty-state">
+        <ion-icon name="folder-open-outline" color="medium"></ion-icon>
+        <h3>No hay categorías personalizadas</h3>
+        <p>Crea tu primera categoría presionando el botón +</p>
+      </div>
+    }
+  </ion-list>
+</ion-content>
